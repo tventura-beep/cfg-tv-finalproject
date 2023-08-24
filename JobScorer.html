@@ -1,0 +1,320 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background-color: #e7eaf6;
+      font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+      text-align: center;
+      font-weight: normal;
+      max-width: 100%;
+      margin: 10px 10px 10px;
+      padding: 5px 5px 5px;
+    }
+
+    h1 {
+      color: #113f67;
+    }
+    h2 {
+      color: #a2a8d3;
+    }
+    table {
+      margin: 30px 60px;
+      padding: 10px;
+    }
+    th {
+      padding-right: 30px;
+      font-weight: normal;
+    }
+    .weights {
+      font-style: italic;
+      font-size: medium;
+    }
+    .container {
+      margin: 30px 60px;
+      border: #113f67;
+    }
+    #welcomeMessage {
+      border-style: solid;
+      border-width: thin;
+      border-color: black;
+    }
+    #quiz {
+      border-style: solid;
+      border-width: thin;
+      border-color: black;
+    }
+    #scoreResults {
+      border-style: solid;
+      border-width: thin;
+      border-color: black;
+    }
+    #nextBtn {
+      background-color: lightblue;
+      border: medium;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 12px;
+      box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+        0 17px 50px 0 rgba(0, 0, 0, 0.19);
+      transition-duration: 0.4s;
+    }
+    #nextBtn:hover {
+      background-color: darkblue;
+      color: white;
+    }
+
+    #scorerBtn {
+      background-color: lightblue;
+      border: medium;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 12px;
+      box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+        0 17px 50px 0 rgba(0, 0, 0, 0.19);
+      transition-duration: 0.4s;
+    }
+    #scorerBtn:hover {
+      background-color: darkblue;
+      color: white;
+    }
+    #resetBtn {
+      background-color: lightblue;
+      border: medium;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 12px;
+      box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+        0 17px 50px 0 rgba(0, 0, 0, 0.19);
+      transition-duration: 0.4s;
+    }
+    #resetBtn:hover {
+      background-color: darkblue;
+      color: white;
+    }
+  </style>
+  <title>Job Scorer</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Welcome to the Job Scorer!</h1>
+    <p>
+      This tool allows you to score a job from the available job description to
+      stop you from wasting your time with applications to jobs that don't match
+      your values.
+    </p>
+    <div id="welcomeMessage">
+      <h3>Initial details</h3>
+      <p>
+        Please enter your name: <input id="userNameEntered" type="text" />
+        <br />
+        <br />
+
+        Please enter the Job Title you want to score: <input id="jobTitle" />
+        <br />
+        <br />
+
+        <button id="nextBtn" onclick="saveWelcome()">Go To Next</button>
+        <br />
+      </p>
+    </div>
+
+    <div id="quiz"><br /></div>
+    <br />
+    <button id="scorerBtn" onclick="checkAnswers()">Submit</button>
+    <br />
+    <br />
+    <div id="scoreResults"></div>
+    <br />
+    <button id="resetBtn" onclick="window.location.reload()">
+      Refresh the page and start again
+    </button>
+    <br />
+  </div>
+
+  <script>
+    //start by hiding anything that shouldn't be visible when the page loads, that will become visible later
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("scorerBtn").style.display = "none";
+    document.getElementById("resetBtn").style.display = "none";
+
+    // initialise variables that you will need across functions
+    let userName = null;
+    let jobTitle = null;
+    let totalJobScore = 0;
+    let blurb = "This is a placeholder blurb";
+    let currentQuestionIndex = 0;
+    const quizContainer = document.getElementById("quiz");
+    const submitBtn = document.getElementById("scorerBtn");
+
+    /* I used this section for debugging, when I was doing the adding of scores!
+    console.log("Initial score " + totalJobScore);
+    console.log(blurb);
+*/
+
+    // first function, generates the "current" question to be visible
+    function generateCurrentQuestion() {
+      const currentQuestion = questions[currentQuestionIndex];
+      let choices = "";
+
+      //loops for each of the questions in my question list, indexing the choices! This was probably the hardest function to get to work
+      currentQuestion.choices.forEach(function (choice, choiceIndex) {
+        choices += `
+        <label>
+          <input type="radio" name="question" value="${choiceIndex}">
+          ${choice}
+        </label>
+        <br/ >
+        <br/ >
+      `;
+      });
+
+      //outputs whatever the current question should be into a div, properly formatted.
+      const output = `
+      <div>
+        <h3>${currentQuestion.question}</h3>
+        ${choices}
+      </div>
+    `;
+      quizContainer.innerHTML = output;
+    }
+
+    //this function hides the welcome section once you press the button to continue, this is a function to nest below
+    function hideWelcome() {
+      let welcomeMessage = document.getElementById("welcomeMessage");
+      welcomeMessage.style.display = "none";
+      document.getElementById("quiz").style.display = "block";
+      document.getElementById("scorerBtn").style.display = "inline";
+    }
+
+    //this function hides the quiz, once you've completed it, this is a function to nest below
+
+    function hideQuiz() {
+      document.getElementById("quiz").style.display = "none";
+      document.getElementById("scorerBtn").style.display = "none";
+      document.getElementById("resetBtn").style.display = "inline";
+    }
+
+    //this function displays the results of the quiz
+    function displayResults() {
+      hideQuiz();
+      const quizResults = document.getElementById("scoreResults");
+      const output = `
+      <div>
+        <h4>Congratulations ${userName}, for scoring this job.</h4>
+        <p>We have done the maths, and your job ${jobTitle} scored a total of ${totalJobScore} out of 27.</p>
+        <br>
+        <p>${blurb}</p>`;
+
+      quizResults.innerHTML = output;
+    }
+
+    // this saves the initial information from the submission, and has two functions above nested.
+    function saveWelcome() {
+      userName = document.getElementById("userNameEntered").value;
+      jobTitle = document.getElementById("jobTitle").value;
+      hideWelcome();
+      generateCurrentQuestion();
+    }
+
+    //this is a constant variable, of nested arrays of the questions and choice options
+    const questions = [
+      {
+        question: "The advertised salary or range is...",
+        choices: [
+          "Lower than current",
+          "Same as current",
+          "Higher than current",
+        ],
+      },
+      {
+        question: "The contract is...",
+        choices: ["Fixed term", "Fixed term likely to extend", "Permanent"],
+      },
+      {
+        question: "Weekly hours are...",
+        choices: ["37hrs+", "35-36hrs", "-35hrs"],
+      },
+      {
+        question: "When it comes to decision making, this role...",
+        choices: [
+          "Has no decision making",
+          "Teamwork makes the dreamwork",
+          "Need to and is trusted to make decisions",
+        ],
+      },
+      {
+        question: "In terms of new skills and challenges this role...",
+        choices: [
+          "I've done this a million times",
+          "I am aware of some of these skills",
+          "Will be great to improve my knowledge",
+        ],
+      },
+      {
+        question: "In terms of variety the role looks to be...",
+        choices: [
+          "Repetitive",
+          "Doing everyone's jobs",
+          "Varied but not overwhelming",
+        ],
+      },
+      {
+        question: "In terms of progression this role...",
+        choices: [
+          "Has no obvious career path",
+          "I can see a few options opening in the future",
+          "Could be the start of a career",
+        ],
+      },
+    ];
+
+    // this function runs each time you submit an answer to add to the score. Once the questions end, it outputs the score and a response blurb (nested function!)
+    function checkAnswers() {
+      console.log("Current score " + totalJobScore);
+      const selectedAnswer = document.querySelector(
+        'input[name="question"]:checked'
+      );
+      let answerValue = parseInt(selectedAnswer.value) + 1;
+
+      console.log("Answer value " + answerValue);
+
+      const currentQuestion = questions[currentQuestionIndex];
+      currentQuestionIndex++;
+
+      totalJobScore += answerValue;
+
+      if (currentQuestionIndex < questions.length) {
+        generateCurrentQuestion();
+      } else {
+        responseBlurb();
+        displayResults();
+      }
+    }
+
+    // this is what creates the actual HTML of the response blurb, it's nested on the function above.
+    function responseBlurb() {
+      if (totalJobScore < 8) {
+        blurb =
+          "I wouldn't apply if I were you, this is not better than your current role.😶";
+      } else if (totalJobScore > 20) {
+        blurb = "I would apply, this could be a great opportunity for you!😎😍";
+      } else {
+        blurb =
+          "If you got time, have a proper look at the job description, it could be the right thing for you.😊";
+      }
+    }
+  </script>
+</body>
