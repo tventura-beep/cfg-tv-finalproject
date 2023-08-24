@@ -1,0 +1,17 @@
+CFG Presentation of Final Project:
+
+
+* What I made: Job Scorer
+   * Show page working here
+
+* Dive into the code
+   * VS Code, has comments to guide you through
+
+* I struggled with:
+   * Making something not too ugly, design is not my thing
+   * I struggled with making quiz questions visible and invisible as well as getting the score to go through correctly and not reset. I looked through previous bits of code we had shared during the course and scavenged to find the right bits. 
+   * Variables inside functions only work inside the own function, kept forgetting the output version.
+
+* I am pretty happy with what I did, I think I wouldn’t do anything else differently to be honest.
+
+* If I were to expand I’d probably like to set up a feature so users can set up their own questions and variable weight values to each of the options.
